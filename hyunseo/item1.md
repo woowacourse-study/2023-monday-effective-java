@@ -189,28 +189,17 @@ public static Ladder create(int numberOfPeople,
 
     return new Ladder(lines, ladderHeight);
 }
-    
-    .
-    .
-    .
-
-테스트 시 객체를 원하는 형식으로 만들기도 어렵고 불필요한 의존이 생기거나 때때론 로직이 복잡해진다.....
-|
-|
-v
-
-@DisplayName("다리가 높이와 라인 수를 입력받고, 각 라인들에 높이만큼의 크기를 가진 Point 리스트를 생성한다")
-@Test
-void create_success() {
-    LadderHeight ladderHeight = new LadderHeight(3);
-    Ladder ladder = Ladder.create(3, ladderHeight, new RandomNumberGenerator());
-    .
-    .
-    .
 ```
 
+이 코드는 객체 생성시에 너무 많은 로직이 들어간다.
 
-Ladder 생성의 책임을 다른 클래스에 이관했더니..
+거기다가 NumberGenerator에 대한 의존으로 변화에 민감하고, 테스트 시 원하는 형태로 Ladder 객체를 생성하기 어렵다.
+
+그래서 이 코드를 유지했을땐 테스트시 원하는 Ladder를 생성하기 위해서 Mock 객체를 활용했었다.
+
+이렇게 객체 생성에 대해 로직이 많이 들어가고 테스트가 어려워졌다면 역할과 책임의 분리가 잘못된것 아닌가? 하는 의심을 해보는 것도 좋은 방법이다.
+
+이 경우엔 생성을 책임지는 별도의 factory class를 만들어 Ladder를 생성하는 방향으로 리팩토링했다.
 ```
 public class LadderGenerator {
 
@@ -236,8 +225,14 @@ public class LadderGenerator {
 }
 ```
 
+이제 Ladder는  public 생성자로 ```List<Line>```을 받아서 생성시킬 수 있고, 테스트시에 내가 원하는 형태로 만들어서 간단하게 생성할 수 있다.
 
-테스트에 사용할 Ladder 객체를 내가 원하는대로 만들기 쉬워졌다..
+```
+public Ladder(List<Line> lines) {
+this.lines = new ArrayList<>(lines);
+}
+
+```
 
 ```
     /**
