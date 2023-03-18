@@ -264,5 +264,5 @@ this.lines = new ArrayList<>(lines);
     }
 ```
 
-![image](img.PNG)
+![image](images/item1_1.png)
 
